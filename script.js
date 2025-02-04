@@ -1,89 +1,106 @@
 document.addEventListener("DOMContentLoaded", function () {
     const table = document.createElement("table");
-    table.style.border = "1px solid black";
     table.style.borderCollapse = "collapse";
-    table.style.fontFamily = "Times New Roman, serif";
+    table.style.fontFamily = "Times New Roman";
     table.style.width = "100%";
-    table.style.tableLayout = "fixed";
+    table.style.tableLayout = "auto";
 
-    const headerRow = document.createElement("tr");
-    const headerCell = document.createElement("th");
-    headerCell.colSpan = 2;
-    headerCell.contentEditable = true;
-    headerCell.innerText = "Time Blocking Schedule";
-    headerCell.style.border = "1px solid black";
-    headerRow.appendChild(headerCell);
-    table.appendChild(headerRow);
+    let selectedCells = new Set();
 
-    for (let hour = 7; hour <= 24 + 1; hour++) {
-        const row = document.createElement("tr");
-        row.style.border = "1px solid black";
+    const headerRow = table.insertRow();
+    const header = document.createElement("th");
+    header.colSpan = 2;
+    header.contentEditable = true;
+    header.style.textAlign = "center";
+    header.style.border = "1px solid black";
+    headerRow.appendChild(header);
 
-        const timeCell = document.createElement("td");
-        timeCell.innerText = hour <= 12 ? `${hour}am` : `${hour - 12}pm`;
-        timeCell.style.textAlign = "right";
-        timeCell.style.border = "1px solid black";
-        timeCell.style.width = "20%";
-        row.appendChild(timeCell);
+    for (let hour = 7; hour !== 2; hour = (hour % 12) + 1) {
+        let row = table.insertRow();
+        let cell1 = row.insertCell();
+        let cell2 = row.insertCell();
 
-        const taskCell = document.createElement("td");
-        taskCell.contentEditable = true;
-        taskCell.style.textAlign = "left";
-        taskCell.style.border = "1px solid black";
-        taskCell.style.width = "80%";
-        row.appendChild(taskCell);
+        cell1.innerText = `${hour}${hour < 12 ? "am" : "pm"}`;
+        cell1.style.textAlign = "right";
+        cell2.contentEditable = true;
+        cell2.style.textAlign = "left";
 
-        table.appendChild(row);
+        [cell1, cell2].forEach(cell => {
+            cell.style.border = "1px solid black";
+            cell.style.wordWrap = "break-word";
+            cell.style.overflow = "hidden";
+            
+            cell.addEventListener("click", function (e) {
+                if (e.shiftKey) {
+                    cell.style.border = "2px solid blue";
+                    selectedCells.add(cell);
+                } else {
+                    selectedCells.forEach(c => c.style.border = "1px solid black");
+                    selectedCells.clear();
+                    cell.style.border = "2px solid red";
+                    selectedCells.add(cell);
+                }
+            });
+            
+            cell.addEventListener("contextmenu", function (e) {
+                e.preventDefault();
+                showContextMenu(e, cell);
+            });
+        });
     }
 
     document.body.appendChild(table);
 
-    let selectedCells = new Set();
-
-    table.addEventListener("click", function (event) {
-        if (event.shiftKey && event.target.tagName === "TD") {
-            selectedCells.add(event.target);
-            event.target.style.border = "2px solid blue";
-        } else {
-            selectedCells.forEach(cell => cell.style.border = "1px solid black");
-            selectedCells.clear();
+    function showContextMenu(event, cell) {
+        const existingMenu = document.getElementById("context-menu");
+        if (existingMenu) {
+            existingMenu.remove();
         }
-    });
 
-    table.addEventListener("contextmenu", function (event) {
-        event.preventDefault();
-        if (event.target.tagName === "TD") {
-            const menu = document.createElement("div");
-            menu.style.position = "absolute";
-            menu.style.top = `${event.clientY}px`;
-            menu.style.left = `${event.clientX}px`;
-            menu.style.background = "white";
-            menu.style.border = "1px solid black";
-            menu.style.padding = "5px";
-            menu.innerHTML = `<button onclick='mergeCells()'>Merge</button> <button onclick='unmergeCells()'>Unmerge</button>`;
-            document.body.appendChild(menu);
+        const menu = document.createElement("div");
+        menu.id = "context-menu";
+        menu.style.position = "absolute";
+        menu.style.top = `${event.clientY}px`;
+        menu.style.left = `${event.clientX}px`;
+        menu.style.background = "#9ebe50";
+        menu.style.border = "1px solid black";
+        menu.style.padding = "5px";
+        menu.style.boxShadow = "2px 2px 5px rgba(0,0,0,0.5)";
 
-            document.addEventListener("click", function removeMenu() {
-                menu.remove();
-                document.removeEventListener("click", removeMenu);
-            });
-        }
-    });
+        const mergeOption = document.createElement("div");
+        mergeOption.innerText = "Merge";
+        mergeOption.addEventListener("click", function () {
+            alert("Merge option selected");
+            menu.remove();
+        });
 
-    function mergeCells() {
-        if (selectedCells.size > 1) {
-            let firstCell = [...selectedCells][0];
-            let text = [...selectedCells].map(cell => cell.innerText).join(" ");
-            firstCell.innerText = text;
-            firstCell.rowSpan = selectedCells.size;
-            selectedCells.forEach((cell, index) => {
-                if (index !== 0) cell.remove();
-            });
-            selectedCells.clear();
-        }
-    }
+        const unmergeOption = document.createElement("div");
+        unmergeOption.innerText = "Unmerge";
+        unmergeOption.addEventListener("click", function () {
+            alert("Unmerge option selected");
+            menu.remove();
+        });
 
-    function unmergeCells() {
-        // Implementation of unmerge logic
+        const colorOption = document.createElement("div");
+        colorOption.innerText = "Change Color";
+        colorOption.addEventListener("click", function () {
+            alert("Change Color option selected");
+            menu.remove();
+        });
+
+        [mergeOption, unmergeOption, colorOption].forEach(option => {
+            option.style.padding = "5px";
+            option.style.cursor = "pointer";
+            option.addEventListener("mouseover", () => option.style.background = "#2e3a10");
+            option.addEventListener("mouseout", () => option.style.background = "#9ebe50");
+            menu.appendChild(option);
+        });
+
+        document.body.appendChild(menu);
+
+        document.addEventListener("click", function removeMenu() {
+            menu.remove();
+            document.removeEventListener("click", removeMenu);
+        });
     }
 });
