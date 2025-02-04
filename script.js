@@ -87,8 +87,8 @@ document.addEventListener("DOMContentLoaded", function () {
         const colorOption = document.createElement("div");
         colorOption.innerText = "Change Color";
         colorOption.addEventListener("click", function () {
-            alert("Change Color option selected");
             menu.remove();
+            showColorPicker(cell);
         });
 
         [mergeOption, unmergeOption, colorOption].forEach(option => {
@@ -107,6 +107,38 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
+    function showColorPicker(cell) {
+        const existingPicker = document.getElementById("color-picker");
+        if (existingPicker) {
+            existingPicker.remove();
+        }
+
+        const picker = document.createElement("div");
+        picker.id = "color-picker";
+        picker.style.position = "absolute";
+        picker.style.top = "50%";
+        picker.style.left = "50%";
+        picker.style.transform = "translate(-50%, -50%)";
+        picker.style.background = "white";
+        picker.style.border = "1px solid black";
+        picker.style.padding = "10px";
+        picker.style.boxShadow = "2px 2px 5px rgba(0,0,0,0.5)";
+
+        const input = document.createElement("input");
+        input.type = "color";
+        picker.appendChild(input);
+
+        const doneButton = document.createElement("button");
+        doneButton.innerText = "Done";
+        doneButton.addEventListener("click", function () {
+            cell.style.backgroundColor = input.value;
+            picker.remove();
+        });
+        picker.appendChild(doneButton);
+
+        document.body.appendChild(picker);
+    }
+
     function mergeSelectedCells() {
         if (selectedCells.size < 2) return;
         
@@ -121,3 +153,4 @@ document.addEventListener("DOMContentLoaded", function () {
         selectedCells.clear();
     }
 });
+
