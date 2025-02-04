@@ -41,6 +41,7 @@ td:last-child {
     border: 1px solid black;
     padding: 5px;
     box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+    z-index: 1000;
 }
 
 #context-menu div {
@@ -51,3 +52,21 @@ td:last-child {
 #context-menu div:hover {
     background: lightgrey;
 }
+
+#color-picker {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    border: 1px solid black;
+    padding: 10px;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+}
+
+#color-picker button {
+    margin-top: 5px;
+    display: block;
+}
+
