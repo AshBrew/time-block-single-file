@@ -9,10 +9,14 @@
             font-family: "Times New Roman";
             border-collapse: collapse;
             width: 100%;
+            resize: both;
+            overflow: auto;
         }
         td {
             border: 1px solid black;
             height: 30px;
+            resize: both;
+            overflow: auto;
         }
         .context-menu {
             position: absolute;
@@ -26,6 +30,13 @@
             cursor: pointer;
             padding: 5px;
         }
+        .color-picker-container {
+            position: absolute;
+            display: none;
+            background: white;
+            padding: 10px;
+            border: 1px solid black;
+        }
     </style>
 </head>
 <body>
@@ -36,6 +47,7 @@
                 this.container = container;
                 this.createTable();
                 this.setupContextMenu();
+                this.setupColorPicker();
             }
 
             createTable() {
@@ -44,11 +56,13 @@
                     let row = this.table.insertRow();
                     let timeCell = row.insertCell(0);
                     let taskCell = row.insertCell(1);
-
+                    
                     timeCell.textContent = this.formatHour(hour);
                     timeCell.style.textAlign = "right";
                     taskCell.style.textAlign = "left";
                     taskCell.dataset.merged = "false";
+                    taskCell.style.resize = "both";
+                    taskCell.style.overflow = "auto";
                     row.addEventListener("contextmenu", (e) => this.showContextMenu(e, taskCell));
                 }
                 this.container.appendChild(this.table);
@@ -115,19 +129,26 @@
                 }
             }
 
-            showColorPicker() {
-                let input = document.createElement("input");
-                input.type = "color";
-                input.style.position = "absolute";
-                input.style.top = "0";
-                input.style.left = "0";
-                input.style.opacity = "0";
-                document.body.appendChild(input);
-                input.click();
-                input.addEventListener("input", () => {
-                    this.selectedCell.style.backgroundColor = input.value;
-                    document.body.removeChild(input);
+            setupColorPicker() {
+                this.colorPickerContainer = document.createElement("div");
+                this.colorPickerContainer.className = "color-picker-container";
+                this.colorPicker = document.createElement("input");
+                this.colorPicker.type = "color";
+                let doneButton = document.createElement("button");
+                doneButton.textContent = "Done";
+                doneButton.addEventListener("click", () => {
+                    this.selectedCell.style.backgroundColor = this.colorPicker.value;
+                    this.colorPickerContainer.style.display = "none";
                 });
+                this.colorPickerContainer.appendChild(this.colorPicker);
+                this.colorPickerContainer.appendChild(doneButton);
+                document.body.appendChild(this.colorPickerContainer);
+            }
+
+            showColorPicker() {
+                this.colorPickerContainer.style.display = "block";
+                this.colorPickerContainer.style.top = `${event.clientY}px`;
+                this.colorPickerContainer.style.left = `${event.clientX}px`;
             }
         }
 
