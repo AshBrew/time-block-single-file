@@ -62,7 +62,7 @@ document.addEventListener("DOMContentLoaded", function () {
         menu.style.position = "absolute";
         menu.style.top = `${event.clientY}px`;
         menu.style.left = `${event.clientX}px`;
-        menu.style.background = "#9ebe50";
+        menu.style.background = "white";
         menu.style.border = "1px solid black";
         menu.style.padding = "5px";
         menu.style.boxShadow = "2px 2px 5px rgba(0,0,0,0.5)";
@@ -91,8 +91,8 @@ document.addEventListener("DOMContentLoaded", function () {
         [mergeOption, unmergeOption, colorOption].forEach(option => {
             option.style.padding = "5px";
             option.style.cursor = "pointer";
-            option.addEventListener("mouseover", () => option.style.background = "#2e3a10");
-            option.addEventListener("mouseout", () => option.style.background = "#9ebe50");
+            option.addEventListener("mouseover", () => option.style.background = "lightgrey");
+            option.addEventListener("mouseout", () => option.style.background = "white");
             menu.appendChild(option);
         });
 
