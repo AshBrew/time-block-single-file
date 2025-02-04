@@ -29,7 +29,10 @@ document.addEventListener("DOMContentLoaded", function () {
             cell.style.border = "1px solid black";
             cell.style.wordWrap = "break-word";
             cell.style.overflow = "hidden";
-            
+            cell.style.resize = "both";
+            cell.style.minWidth = "50px";
+            cell.style.minHeight = "20px";
+
             cell.addEventListener("click", function (e) {
                 if (e.shiftKey) {
                     cell.style.border = "2px solid blue";
@@ -70,7 +73,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const mergeOption = document.createElement("div");
         mergeOption.innerText = "Merge";
         mergeOption.addEventListener("click", function () {
-            alert("Merge option selected");
+            mergeSelectedCells();
             menu.remove();
         });
 
@@ -102,5 +105,19 @@ document.addEventListener("DOMContentLoaded", function () {
             menu.remove();
             document.removeEventListener("click", removeMenu);
         });
+    }
+
+    function mergeSelectedCells() {
+        if (selectedCells.size < 2) return;
+        
+        let firstCell = Array.from(selectedCells)[0];
+        firstCell.colSpan = selectedCells.size;
+        firstCell.style.textAlign = "center";
+        
+        selectedCells.forEach((cell, index) => {
+            if (index > 0) cell.remove();
+        });
+        
+        selectedCells.clear();
     }
 });
