@@ -2,7 +2,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const table = document.createElement("table");
     table.style.borderCollapse = "collapse";
     table.style.fontFamily = "Times New Roman";
-    table.style.width = "100%";
+    table.style.width = "auto";
     table.style.tableLayout = "auto";
 
     let selectedCells = new Set();
@@ -12,16 +12,15 @@ document.addEventListener("DOMContentLoaded", function () {
     header.colSpan = 2;
     header.contentEditable = true;
     header.style.textAlign = "center";
-    header.style.border = "1px solid black";
+    header.style.border = "1px #476232";
     headerRow.appendChild(header);
 
-    for (let hour = 7; hour !== 2; hour = (hour % 12) + 1) {
-        let row = table.insertRow();
+    for {let row = table.insertRow();
         let cell1 = row.insertCell();
         cell1.rowSpan = 4;
-        cell1.innerText = `${hour}${hour < 12 ? "am" : "pm"}`;
+        cell1.contentEditable = true;
         cell1.style.textAlign = "right";
-        cell1.style.border = "1px solid black";
+        cell1.style.border = "1px #476232";
         cell1.style.wordWrap = "break-word";
         cell1.style.overflow = "hidden";
         cell1.style.resize = "both";
@@ -33,7 +32,7 @@ document.addEventListener("DOMContentLoaded", function () {
             let cell2 = row.insertCell();
             cell2.contentEditable = true;
             cell2.style.textAlign = "left";
-            cell2.style.border = "1px solid black";
+            cell2.style.border = "1px #476232";
             cell2.style.wordWrap = "break-word";
             cell2.style.overflow = "hidden";
             cell2.style.resize = "both";
@@ -42,12 +41,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
             cell2.addEventListener("click", function (e) {
                 if (e.shiftKey) {
-                    cell2.style.border = "2px solid blue";
                     selectedCells.add(cell2);
                 } else {
                     selectedCells.forEach(c => c.style.border = "1px solid black");
                     selectedCells.clear();
-                    cell2.style.border = "2px solid red";
                     selectedCells.add(cell2);
                 }
             });
