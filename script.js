@@ -65,7 +65,8 @@ document.addEventListener("DOMContentLoaded", function () {
         if (selectedCells.size < 2) return;
         let minRow = Infinity, maxRow = -1, minCol = Infinity, maxCol = -1;
         selectedCells.forEach(cell => {
-            const { rowIndex, cellIndex } = cell.parentElement;
+            const rowIndex = cell.parentElement.rowIndex;
+            const cellIndex = Array.from(cell.parentElement.cells).indexOf(cell);
             minRow = Math.min(minRow, rowIndex);
             maxRow = Math.max(maxRow, rowIndex);
             minCol = Math.min(minCol, cellIndex);
@@ -78,6 +79,15 @@ document.addEventListener("DOMContentLoaded", function () {
             if (cell !== firstCell) cell.remove();
         });
         selectedCells.clear();
+    }
+
+    function unmergeSelectedCells() {
+        alert("Unmerge function will be implemented.");
+    }
+
+    function showColorPicker(cell) {
+        let color = prompt("Enter a color or hex code:", "#ffffff");
+        if (color) cell.style.backgroundColor = color;
     }
 
     function showContextMenu(event, cell) {
@@ -97,16 +107,16 @@ document.addEventListener("DOMContentLoaded", function () {
         menu.style.boxShadow = "2px 2px 5px rgba(0,0,0,0.5)";
 
         const mergeOption = document.createElement("div");
-        mergeOption.innerText = "Merge";
+        mergeOption.innerText = "Merge Cells";
         mergeOption.addEventListener("click", function () {
             mergeSelectedCells();
             menu.remove();
         });
 
         const unmergeOption = document.createElement("div");
-        unmergeOption.innerText = "Unmerge";
+        unmergeOption.innerText = "Unmerge Cells";
         unmergeOption.addEventListener("click", function () {
-            alert("Unmerge option selected");
+            unmergeSelectedCells();
             menu.remove();
         });
 
@@ -133,5 +143,3 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 });
-
-
