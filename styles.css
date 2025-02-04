@@ -1,17 +1,19 @@
 table {
     border-collapse: collapse;
     font-family: "Times New Roman", serif;
-    width: 100%;
+    width: auto;
     table-layout: auto;
 }
 
 th, td {
-    border: 1px solid black;
+    background: rgba(227, 240, 216);
+    border: 1px;
+    border-color: rgba(71, 98, 50);
     padding: 5px;
     word-wrap: break-word;
     overflow: hidden;
-    min-width: 50px;
-    min-height: 20px;
+    min-width: 25px;
+    min-height: 10px;
     resize: both;
 }
 
@@ -28,19 +30,22 @@ td {
 }
 
 .selected {
-    border: 2px solid blue;
+    border: 2px;
+    border-color: rgba(229, 161, 241);
 }
 
 .active {
-    border: 2px solid red;
+    border: 2px;
+    border-color: rgba(229, 92, 255);
 }
 
 #context-menu {
     position: absolute;
-    background: white;
-    border: 1px solid black;
+    background: rgba(212, 233, 197);
+    border: 1px;
+    border-color: rgba(123, 172, 88);
     padding: 5px;
-    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+    box-shadow: 2px 2px 5px rgba(88, 123, 63);
 }
 
 #context-menu div {
@@ -49,5 +54,5 @@ td {
 }
 
 #context-menu div:hover {
-    background: lightgrey;
+    background: rgba(198, 226, 178);
 }
