@@ -12,6 +12,7 @@ th, td {
     overflow: hidden;
     min-width: 50px;
     min-height: 20px;
+    resize: both;
 }
 
 th {
@@ -24,7 +25,6 @@ td:first-child {
 
 td {
     text-align: left;
-    resize: both;
 }
 
 .selected {
