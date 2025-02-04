@@ -18,41 +18,67 @@ document.addEventListener("DOMContentLoaded", function () {
     for (let hour = 7; hour !== 2; hour = (hour % 12) + 1) {
         let row = table.insertRow();
         let cell1 = row.insertCell();
-        let cell2 = row.insertCell();
-
+        cell1.rowSpan = 4;
         cell1.innerText = `${hour}${hour < 12 ? "am" : "pm"}`;
         cell1.style.textAlign = "right";
-        cell2.contentEditable = true;
-        cell2.style.textAlign = "left";
+        cell1.style.border = "1px solid black";
+        cell1.style.wordWrap = "break-word";
+        cell1.style.overflow = "hidden";
+        cell1.style.resize = "both";
+        cell1.style.minWidth = "50px";
+        cell1.style.minHeight = "20px";
+        
+        for (let i = 0; i < 4; i++) {
+            if (i > 0) row = table.insertRow();
+            let cell2 = row.insertCell();
+            cell2.contentEditable = true;
+            cell2.style.textAlign = "left";
+            cell2.style.border = "1px solid black";
+            cell2.style.wordWrap = "break-word";
+            cell2.style.overflow = "hidden";
+            cell2.style.resize = "both";
+            cell2.style.minWidth = "50px";
+            cell2.style.minHeight = "20px";
 
-        [cell1, cell2].forEach(cell => {
-            cell.style.border = "1px solid black";
-            cell.style.wordWrap = "break-word";
-            cell.style.overflow = "hidden";
-            cell.style.resize = "both";
-            cell.style.minWidth = "50px";
-            cell.style.minHeight = "20px";
-
-            cell.addEventListener("click", function (e) {
+            cell2.addEventListener("click", function (e) {
                 if (e.shiftKey) {
-                    cell.style.border = "2px solid blue";
-                    selectedCells.add(cell);
+                    cell2.style.border = "2px solid blue";
+                    selectedCells.add(cell2);
                 } else {
                     selectedCells.forEach(c => c.style.border = "1px solid black");
                     selectedCells.clear();
-                    cell.style.border = "2px solid red";
-                    selectedCells.add(cell);
+                    cell2.style.border = "2px solid red";
+                    selectedCells.add(cell2);
                 }
             });
             
-            cell.addEventListener("contextmenu", function (e) {
+            cell2.addEventListener("contextmenu", function (e) {
                 e.preventDefault();
-                showContextMenu(e, cell);
+                showContextMenu(e, cell2);
             });
-        });
+        }
     }
 
     document.body.appendChild(table);
+
+    function mergeSelectedCells() {
+        if (selectedCells.size < 2) return;
+        let minRow = Infinity, maxRow = -1, minCol = Infinity, maxCol = -1;
+        selectedCells.forEach(cell => {
+            const { rowIndex, cellIndex } = cell.parentElement;
+            minRow = Math.min(minRow, rowIndex);
+            maxRow = Math.max(maxRow, rowIndex);
+            minCol = Math.min(minCol, cellIndex);
+            maxCol = Math.max(maxCol, cellIndex);
+        });
+        let firstCell = table.rows[minRow].cells[minCol];
+        firstCell.rowSpan = maxRow - minRow + 1;
+        firstCell.colSpan = maxCol - minCol + 1;
+        selectedCells.forEach(cell => {
+            if (cell !== firstCell) cell.remove();
+        });
+        selectedCells.clear();
+    }
 
     function showContextMenu(event, cell) {
         const existingMenu = document.getElementById("context-menu");
@@ -106,51 +132,6 @@ document.addEventListener("DOMContentLoaded", function () {
             document.removeEventListener("click", removeMenu);
         });
     }
-
-    function showColorPicker(cell) {
-        const existingPicker = document.getElementById("color-picker");
-        if (existingPicker) {
-            existingPicker.remove();
-        }
-
-        const picker = document.createElement("div");
-        picker.id = "color-picker";
-        picker.style.position = "absolute";
-        picker.style.top = "50%";
-        picker.style.left = "50%";
-        picker.style.transform = "translate(-50%, -50%)";
-        picker.style.background = "white";
-        picker.style.border = "1px solid black";
-        picker.style.padding = "10px";
-        picker.style.boxShadow = "2px 2px 5px rgba(0,0,0,0.5)";
-
-        const input = document.createElement("input");
-        input.type = "color";
-        picker.appendChild(input);
-
-        const doneButton = document.createElement("button");
-        doneButton.innerText = "Done";
-        doneButton.addEventListener("click", function () {
-            cell.style.backgroundColor = input.value;
-            picker.remove();
-        });
-        picker.appendChild(doneButton);
-
-        document.body.appendChild(picker);
-    }
-
-    function mergeSelectedCells() {
-        if (selectedCells.size < 2) return;
-        
-        let firstCell = Array.from(selectedCells)[0];
-        firstCell.colSpan = selectedCells.size;
-        firstCell.style.textAlign = "center";
-        
-        selectedCells.forEach((cell, index) => {
-            if (index > 0) cell.remove();
-        });
-        
-        selectedCells.clear();
-    }
 });
+
 
