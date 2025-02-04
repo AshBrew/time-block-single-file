@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Time Blocking Widget</title>
+    <style>
+        table {
+            font-family: "Times New Roman";
+            border-collapse: collapse;
+            width: 100%;
+        }
+        td {
+            border: 1px solid black;
+            height: 30px;
+        }
+        .context-menu {
+            position: absolute;
+            display: none;
+            list-style: none;
+            background: white;
+            border: 1px solid black;
+            padding: 5px;
+        }
+        .context-menu li {
+            cursor: pointer;
+            padding: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div id="time-blocking-container"></div>
+    <script>
+        class TimeBlockingWidget {
+            constructor(container) {
+                this.container = container;
+                this.createTable();
+                this.setupContextMenu();
+            }
+
+            createTable() {
+                this.table = document.createElement("table");
+                for (let hour = 7; hour <= 24 + 1; hour++) {
+                    let row = this.table.insertRow();
+                    let timeCell = row.insertCell(0);
+                    let taskCell = row.insertCell(1);
+
+                    timeCell.textContent = this.formatHour(hour);
+                    timeCell.style.textAlign = "right";
+                    taskCell.style.textAlign = "left";
+                    taskCell.dataset.merged = "false";
+                    row.addEventListener("contextmenu", (e) => this.showContextMenu(e, taskCell));
+                }
+                this.container.appendChild(this.table);
+            }
+
+            formatHour(hour) {
+                if (hour > 24) return "1 AM";
+                if (hour === 24) return "12 AM";
+                return hour > 12 ? `${hour - 12} PM` : `${hour} AM`;
+            }
+
+            setupContextMenu() {
+                this.contextMenu = document.createElement("ul");
+                this.contextMenu.className = "context-menu";
+                ["Merge", "Unmerge", "Change Color"].forEach((action) => {
+                    let item = document.createElement("li");
+                    item.textContent = action;
+                    item.addEventListener("click", () => {
+                        this.handleContextMenuAction(action.toLowerCase());
+                        this.contextMenu.style.display = "none";
+                    });
+                    this.contextMenu.appendChild(item);
+                });
+                document.body.appendChild(this.contextMenu);
+                document.addEventListener("click", () => (this.contextMenu.style.display = "none"));
+            }
+
+            showContextMenu(event, cell) {
+                event.preventDefault();
+                this.selectedCell = cell;
+                this.contextMenu.style.top = `${event.clientY}px`;
+                this.contextMenu.style.left = `${event.clientX}px`;
+                this.contextMenu.style.display = "block";
+            }
+
+            handleContextMenuAction(action) {
+                if (!this.selectedCell) return;
+                if (action === "merge") {
+                    this.mergeCells();
+                } else if (action === "unmerge") {
+                    this.unmergeCells();
+                } else if (action === "change color") {
+                    this.showColorPicker();
+                }
+            }
+
+            mergeCells() {
+                let nextRow = this.selectedCell.parentElement.nextElementSibling;
+                if (nextRow) {
+                    let nextCell = nextRow.cells[1];
+                    this.selectedCell.rowSpan = 2;
+                    nextCell.style.display = "none";
+                }
+            }
+
+            unmergeCells() {
+                let rowSpan = this.selectedCell.rowSpan;
+                if (rowSpan > 1) {
+                    this.selectedCell.rowSpan = 1;
+                    let nextRow = this.selectedCell.parentElement.nextElementSibling;
+                    if (nextRow) {
+                        nextRow.cells[1].style.display = "table-cell";
+                    }
+                }
+            }
+
+            showColorPicker() {
+                let input = document.createElement("input");
+                input.type = "color";
+                input.style.position = "absolute";
+                input.style.top = "0";
+                input.style.left = "0";
+                input.style.opacity = "0";
+                document.body.appendChild(input);
+                input.click();
+                input.addEventListener("input", () => {
+                    this.selectedCell.style.backgroundColor = input.value;
+                    document.body.removeChild(input);
+                });
+            }
+        }
+
+        const container = document.getElementById("time-blocking-container");
+        new TimeBlockingWidget(container);
+    </script>
+</body>
+</html>
